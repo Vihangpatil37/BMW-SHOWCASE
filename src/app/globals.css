@@ -43,73 +43,64 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ===== BMW M3 — Premium Dark Theme ===== */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+
+  /* Dark-first color palette */
+  --background: #080808;
+  --foreground: #f0efe9;
+
+  --card: #111111;
+  --card-foreground: #f0efe9;
+
+  --popover: #111111;
+  --popover-foreground: #f0efe9;
+
+  --primary: #f0efe9;
+  --primary-foreground: #080808;
+
+  --secondary: #1a1a1a;
+  --secondary-foreground: #a8a49e;
+
+  --muted: #161616;
+  --muted-foreground: #6e6b66;
+
+  --accent: #1c1c1c;
+  --accent-foreground: #f0efe9;
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(0, 102, 177, 0.5);
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: #0d0d0d;
+  --sidebar-foreground: #f0efe9;
+  --sidebar-primary: #f0efe9;
+  --sidebar-primary-foreground: #080808;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #f0efe9;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: rgba(0, 102, 177, 0.5);
+
+  /* BMW M Brand Colors */
+  --bmw-blue: #0066B1;
+  --bmw-dark-blue: #003B7A;
+  --bmw-red: #D5001C;
+  --bmw-silver: #8C8C8C;
+
+  /* Surfaces */
+  --surface-1: #0d0d0d;
+  --surface-2: #111111;
+  --surface-3: #161616;
+  --surface-4: #1c1c1c;
 }
 
 @layer base {
@@ -117,83 +108,72 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }
 
-/* ===== BMW M3 Landing Page Custom Styles ===== */
-
-/* Smooth scrolling */
+/* ===== Smooth Scrolling ===== */
 html {
   scroll-behavior: smooth;
 }
 
-/* Grain/noise overlay for cinematic feel */
-.grain-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
-}
-
-/* Custom scrollbar for the page */
+/* ===== Custom Scrollbar — Premium Dark ===== */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5F3F0;
+  background: #080808;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4D0CB;
+  background: #2a2a2a;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8B3AD;
+  background: linear-gradient(180deg, #0066B1, #D5001C);
 }
 
-/* Canvas container fix */
+/* ===== Text Selection ===== */
+::selection {
+  background-color: rgba(0, 102, 177, 0.25);
+  color: #f0efe9;
+}
+
+/* ===== Focus Ring ===== */
+*:focus-visible {
+  outline: 2px solid #0066B1;
+  outline-offset: 2px;
+}
+
+/* ===== Canvas ===== */
 canvas {
   touch-action: none;
 }
 
-/* Clip-path animation helper */
-.clip-reveal {
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* ===== Glassmorphism Utility ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.clip-reveal-hidden {
-  clip-path: inset(0 100% 0 0);
+.glass-dark {
+  background: rgba(8, 8, 8, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* BMW M color utility classes */
-.bmw-blue {
-  color: #0066B1;
+/* ===== BMW M Stripe Utilities ===== */
+.bmw-stripe {
+  display: flex;
+  gap: 2px;
 }
 
-.bmw-dark-blue {
-  color: #003B7A;
-}
-
-.bmw-red {
-  color: #D5001C;
-}
-
-.bmw-bg-blue {
-  background-color: #0066B1;
-}
-
-.bmw-bg-dark-blue {
-  background-color: #003B7A;
-}
-
-.bmw-bg-red {
-  background-color: #D5001C;
-}
-
-/* Section divider with M stripes */
 .m-stripe-divider {
   display: flex;
   gap: 2px;
@@ -204,19 +184,26 @@ canvas {
   width: 2rem;
 }
 
-/* Text selection color */
-::selection {
-  background-color: rgba(0, 102, 177, 0.15);
-  color: inherit;
+/* ===== Grain/Noise Overlay ===== */
+.grain-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.04;
+  pointer-events: none;
 }
 
-/* Focus ring for accessibility */
-*:focus-visible {
-  outline: 2px solid #0066B1;
-  outline-offset: 2px;
+/* ===== Clip-path Reveal ===== */
+.clip-reveal {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Prevent layout shift from 3D loading */
+.clip-reveal-hidden {
+  clip-path: inset(0 100% 0 0);
+}
+
+/* ===== Model Container ===== */
 .model-container {
   position: relative;
   width: 100%;
@@ -228,7 +215,7 @@ canvas {
   inset: 0;
 }
 
-/* Horizontal scroll containers */
+/* ===== Horizontal Scroll ===== */
 .horizontal-scroll-container {
   overflow-x: auto;
   overflow-y: hidden;
@@ -238,4 +225,43 @@ canvas {
 
 .horizontal-scroll-container::-webkit-scrollbar {
   display: none;
+}
+
+/* ===== BMW M Color Helpers ===== */
+.bmw-blue { color: #0066B1; }
+.bmw-dark-blue { color: #003B7A; }
+.bmw-red { color: #D5001C; }
+.bmw-bg-blue { background-color: #0066B1; }
+.bmw-bg-dark-blue { background-color: #003B7A; }
+.bmw-bg-red { background-color: #D5001C; }
+
+/* ===== Glow effects ===== */
+.glow-blue {
+  box-shadow: 0 0 60px rgba(0, 102, 177, 0.15), 0 0 120px rgba(0, 102, 177, 0.08);
+}
+
+.glow-red {
+  box-shadow: 0 0 60px rgba(213, 0, 28, 0.15), 0 0 120px rgba(213, 0, 28, 0.08);
+}
+
+/* ===== Animated gradient border ===== */
+.m-gradient-border {
+  background: linear-gradient(90deg, #0066B1, #003B7A, #D5001C);
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== Section fade-in utility ===== */
+.section-bg {
+  background-color: var(--background);
+}
+
+.section-bg-raised {
+  background-color: var(--surface-1);
 }

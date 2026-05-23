@@ -6,6 +6,9 @@ import { ModelViewerWithLoader } from './ModelViewer'
 
 interface ShowcaseRow {
   modelPath: string
+  sketchfabId?: string
+  sfTransform?: string
+  sfFilter?: string
   color: string
   stripeColor: string
   label: string
@@ -16,6 +19,9 @@ interface ShowcaseRow {
 const showcaseRows: ShowcaseRow[] = [
   {
     modelPath: '/models/red-car.glb',
+    sketchfabId: '8fa21fe97a6042a2a09e0b09fd546b91',
+    sfTransform: 'scale(1.15) translateY(20px)',
+    sfFilter: 'contrast(1.05)',
     color: '#D5001C',
     stripeColor: '#D5001C',
     label: 'HELLROT',
@@ -24,6 +30,9 @@ const showcaseRows: ShowcaseRow[] = [
   },
   {
     modelPath: '/models/silver-car.glb',
+    sketchfabId: '81e322dbf656444d861e53e8b402c1db',
+    sfTransform: 'scale(1.1) translateY(15px)',
+    sfFilter: 'brightness(1.15) contrast(1.1) saturate(0.8)',
     color: '#8C8C8C',
     stripeColor: '#0066B1',
     label: 'SILBER',
@@ -32,7 +41,10 @@ const showcaseRows: ShowcaseRow[] = [
   },
   {
     modelPath: '/models/black-car.glb',
-    color: '#1A1A1A',
+    sketchfabId: 'ab2574c2d1414062bedc6a5457443757',
+    sfTransform: 'scale(1.1) translateY(10px)',
+    sfFilter: 'brightness(3) contrast(1.2)',
+    color: '#555555',
     stripeColor: '#003B7A',
     label: 'SCHWARZ',
     sublabel: 'Jet Black — The Stealth Variant',
@@ -53,7 +65,6 @@ function ShowcaseRowItem({
   const speedRef = useRef(row.speed)
   const inViewRef = useRef(isInView)
 
-  // Keep refs in sync
   useEffect(() => {
     speedRef.current = row.speed
     inViewRef.current = isInView
@@ -92,35 +103,64 @@ function ShowcaseRowItem({
     <div ref={rowRef} className="flex items-center gap-0 will-change-transform">
       {/* Racing stripe behind car */}
       <div
-        className="absolute left-0 right-0 h-[2px] opacity-15"
+        className="absolute left-0 right-0 h-[1px] opacity-10"
         style={{ backgroundColor: row.stripeColor, top: '50%' }}
       />
-      {/* Additional decorative line */}
       <div
-        className="absolute left-0 right-0 h-[1px] opacity-[0.06]"
+        className="absolute left-0 right-0 h-[1px] opacity-[0.04]"
         style={{ backgroundColor: row.stripeColor, top: 'calc(50% - 12px)' }}
       />
       <div className="relative w-[450px] md:w-[600px] h-[230px] md:h-[280px] flex-shrink-0">
-        <ModelViewerWithLoader
-          modelPath={row.modelPath}
-          scale={0.8}
-          position={[0, -0.5, 0]}
-          className="w-full h-full"
-          autoRotate
-          autoRotateSpeed={0.4}
-          cameraPosition={[4, 1.5, 4]}
-        />
+        {row.sketchfabId ? (
+          <div className="relative w-full h-full">
+            {/* 
+              Make the iframe canvas much larger than the container to ensure the car 
+              is drawn at a good size and doesn't get clipped horizontally when rotating. 
+              Use clipPath to hide the Sketchfab UI bars (top 60px, bottom 60px).
+            */}
+            <iframe
+              title={row.label}
+              frameBorder="0"
+              allowFullScreen
+              allow="autoplay; fullscreen; xr-spatial-tracking"
+              src={`https://sketchfab.com/models/${row.sketchfabId}/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&preload=1&transparent=1&dnt=1`}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                position: 'absolute',
+                top: '-100px',
+                left: '-50px',
+                width: 'calc(100% + 100px)',
+                maxWidth: 'none',
+                height: 'calc(100% + 200px)',
+                clipPath: 'inset(60px 0 60px 0)',
+                transform: row.sfTransform,
+                filter: row.sfFilter,
+              }}
+            />
+          </div>
+        ) : (
+          <ModelViewerWithLoader
+            modelPath={row.modelPath}
+            scale={0.8}
+            position={[0, -0.5, 0]}
+            className="w-full h-full"
+            autoRotate
+            autoRotateSpeed={0.4}
+            cameraPosition={[4, 1.5, 4]}
+          />
+        )}
       </div>
       <div className="flex-shrink-0 ml-8 md:ml-12">
         <span
-          className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter opacity-[0.05] block"
-          style={{ color: row.color }}
+          className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter block"
+          style={{ color: row.color, opacity: 0.08 }}
         >
           {row.label}
         </span>
         <span
-          className="text-[10px] uppercase tracking-[0.25em] font-medium block mt-1 opacity-40"
-          style={{ color: row.color }}
+          className="text-[10px] uppercase tracking-[0.25em] font-medium block mt-1"
+          style={{ color: row.color, opacity: 0.35 }}
         >
           {row.sublabel}
         </span>
@@ -140,9 +180,8 @@ export default function CarShowcase() {
   }, [])
 
   if (isMobile) {
-    // Mobile: stacked vertical sections with reveal animations
     return (
-      <section className="py-20" style={{ backgroundColor: '#F5F3F0' }}>
+      <section className="py-20" style={{ backgroundColor: '#080808' }}>
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center gap-3 mb-12">
             <div className="flex gap-0.5">
@@ -166,7 +205,7 @@ export default function CarShowcase() {
               >
                 {/* Stripe accent */}
                 <div
-                  className="absolute left-0 top-0 bottom-0 w-[2px] opacity-20"
+                  className="absolute left-0 top-0 bottom-0 w-[2px] opacity-15"
                   style={{ backgroundColor: row.stripeColor }}
                 />
                 <div className="pl-6">
@@ -179,17 +218,42 @@ export default function CarShowcase() {
                       {row.label}
                     </span>
                   </div>
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-wider mb-4">{row.sublabel}</p>
-                  <div className="h-[280px]">
-                    <ModelViewerWithLoader
-                      modelPath={row.modelPath}
-                      scale={0.7}
-                      position={[0, -0.5, 0]}
-                      className="w-full h-full"
-                      autoRotate
-                      autoRotateSpeed={0.3}
-                      cameraPosition={[4, 1.5, 4]}
-                    />
+                  <p className="text-[10px] text-neutral-600 uppercase tracking-wider mb-4">{row.sublabel}</p>
+                  <div className="relative h-[280px]">
+                    {row.sketchfabId ? (
+                      <div className="relative w-full h-full">
+                        <iframe
+                          title={row.label}
+                          frameBorder="0"
+                          allowFullScreen
+                          allow="autoplay; fullscreen; xr-spatial-tracking"
+                          src={`https://sketchfab.com/models/${row.sketchfabId}/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&preload=1&transparent=1&dnt=1`}
+                          style={{
+                            border: 'none',
+                            background: 'transparent',
+                            position: 'absolute',
+                            top: '-100px',
+                            left: '-20px',
+                            width: 'calc(100% + 40px)',
+                            maxWidth: 'none',
+                            height: 'calc(100% + 200px)',
+                            clipPath: 'inset(60px 0 60px 0)',
+                            transform: row.sfTransform,
+                            filter: row.sfFilter,
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <ModelViewerWithLoader
+                        modelPath={row.modelPath}
+                        scale={0.7}
+                        position={[0, -0.5, 0]}
+                        className="w-full h-full"
+                        autoRotate
+                        autoRotateSpeed={0.3}
+                        cameraPosition={[4, 1.5, 4]}
+                      />
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -201,7 +265,7 @@ export default function CarShowcase() {
   }
 
   return (
-    <section className="py-24 overflow-hidden" style={{ backgroundColor: '#F5F3F0' }}>
+    <section className="py-24 overflow-hidden" style={{ backgroundColor: '#080808' }}>
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20 mb-16">
         <div className="flex items-center gap-3">
           <div className="flex gap-0.5">
@@ -213,19 +277,19 @@ export default function CarShowcase() {
             The Collection
           </h2>
         </div>
-        <p className="text-neutral-300 text-xs mt-2 tracking-wider">SCROLL TO EXPLORE VARIANTS</p>
+        <p className="text-neutral-700 text-xs mt-2 tracking-wider">SCROLL TO EXPLORE VARIANTS</p>
       </div>
       <div className="space-y-0">
         {showcaseRows.map((row, i) => (
-          <div key={row.label} className="relative h-[260px] md:h-[300px] overflow-hidden border-b border-neutral-200/30">
+          <div key={row.label} className="relative h-[260px] md:h-[300px] overflow-hidden" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
             {/* Vertical racing line */}
             <div
-              className="absolute top-0 bottom-0 w-[1px] opacity-[0.08]"
+              className="absolute top-0 bottom-0 w-[1px] opacity-[0.05]"
               style={{ backgroundColor: row.stripeColor, left: `${20 + i * 10}%` }}
             />
             {/* Horizontal stripe at center */}
             <div
-              className="absolute left-0 right-0 h-[2px] opacity-[0.06]"
+              className="absolute left-0 right-0 h-[1px] opacity-[0.04]"
               style={{ backgroundColor: row.stripeColor, top: '50%', transform: 'translateY(-50%)' }}
             />
             <ShowcaseRowItem row={row} index={i} />

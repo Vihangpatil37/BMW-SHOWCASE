@@ -17,10 +17,17 @@ export default function RacingSection() {
   return (
     <section
       ref={ref}
-      className="relative py-24 md:py-32 lg:py-40 overflow-hidden bg-neutral-950"
+      className="relative py-24 md:py-32 lg:py-40 overflow-hidden"
+      style={{ backgroundColor: '#050505' }}
     >
       {/* Grain/noise overlay */}
-      <div className="absolute inset-0 opacity-[0.035] pointer-events-none z-10 grain-overlay" />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none">
+        <filter id="grain-racing">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+          <feColorMatrix type="saturate" values="0"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain-racing)" opacity="0.03"/>
+      </svg>
 
       {/* BMW M stripes accent at top */}
       <div className="absolute top-0 left-0 right-0 flex h-[2px] z-20">
@@ -29,25 +36,44 @@ export default function RacingSection() {
         <div className="flex-1" style={{ backgroundColor: '#D5001C' }} />
       </div>
 
+      {/* Ambient blue glow */}
+      <div
+        className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(0,102,177,0.08) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
+      {/* Ambient red glow */}
+      <div
+        className="absolute top-1/2 right-0 -translate-y-1/2 w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(213,0,28,0.06) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+        }}
+      />
+
       {/* Animated diagonal racing lines */}
       <motion.div className="absolute inset-0 pointer-events-none" style={{ y: stripeY }}>
         <div
-          className="absolute w-[1px] h-[200%] opacity-[0.06] left-[15%] top-[-50%]"
+          className="absolute w-[1px] h-[200%] opacity-[0.07] left-[15%] top-[-50%]"
           style={{ backgroundColor: '#D5001C', transform: 'rotate(20deg)' }}
         />
         <div
-          className="absolute w-[1px] h-[200%] opacity-[0.04] left-[70%] top-[-50%]"
+          className="absolute w-[1px] h-[200%] opacity-[0.05] left-[70%] top-[-50%]"
           style={{ backgroundColor: '#0066B1', transform: 'rotate(-15deg)' }}
         />
         <div
-          className="absolute w-[1px] h-[200%] opacity-[0.05] left-[85%] top-[-50%]"
+          className="absolute w-[1px] h-[200%] opacity-[0.06] left-[85%] top-[-50%]"
           style={{ backgroundColor: '#003B7A', transform: 'rotate(10deg)' }}
         />
       </motion.div>
 
       {/* Large background number */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none">
-        <span className="text-[200px] md:text-[350px] font-black tracking-tighter leading-none opacity-[0.015] text-white block">
+        <span className="text-[200px] md:text-[350px] font-black tracking-tighter leading-none text-white block"
+          style={{ opacity: 0.02 }}
+        >
           M3
         </span>
       </div>
@@ -96,10 +122,11 @@ export default function RacingSection() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <button className="group relative text-sm uppercase tracking-[0.2em] font-semibold text-white pb-2 border-b border-white/20 transition-all duration-300 hover:border-white/80 hover:tracking-[0.3em]">
+              <button className="group relative text-sm uppercase tracking-[0.2em] font-semibold text-white pb-2 transition-all duration-300 hover:tracking-[0.3em]"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.15)' }}
+              >
                 Learn More
                 <span className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-500 group-hover:w-full" style={{ backgroundColor: '#D5001C' }} />
-                <span className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-700 delay-75 group-hover:w-full" style={{ backgroundColor: '#0066B1' }} />
               </button>
             </motion.div>
 
@@ -117,9 +144,9 @@ export default function RacingSection() {
               ].map((stat, i) => (
                 <div key={i} className="relative">
                   <span className="text-2xl md:text-3xl font-black text-white block">{stat.value}</span>
-                  <span className="text-[10px] text-neutral-500 mt-1 uppercase tracking-wider block">{stat.label}</span>
+                  <span className="text-[10px] text-neutral-600 mt-1 uppercase tracking-wider block">{stat.label}</span>
                   {i < 2 && (
-                    <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-[1px] h-8 bg-neutral-800" />
+                    <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-[1px] h-8" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }} />
                   )}
                 </div>
               ))}
@@ -128,26 +155,46 @@ export default function RacingSection() {
 
           {/* Right: 3D Black Car */}
           <motion.div
-            className="relative h-[350px] md:h-[450px] lg:h-[550px]"
+            className="relative h-[350px] md:h-[450px] lg:h-[550px] flex items-center justify-center"
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 1, delay: 0.3 }}
           >
-            {/* Subtle glow behind car */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-[0.04]"
-              style={{ backgroundColor: '#0066B1', filter: 'blur(80px)' }}
+            {/* Enhanced glow behind car */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
+              style={{ 
+                background: 'radial-gradient(circle, rgba(0,102,177,0.12) 0%, transparent 70%)',
+                filter: 'blur(40px)',
+              }}
+            />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] rounded-full"
+              style={{ 
+                background: 'radial-gradient(circle, rgba(213,0,28,0.07) 0%, transparent 70%)',
+                filter: 'blur(30px)',
+              }}
             />
 
-            <ModelViewerWithLoader
-              modelPath="/models/black-car.glb"
-              scale={1.1}
-              position={[0, -0.5, 0]}
-              className="w-full h-full"
-              autoRotate
-              autoRotateSpeed={0.15}
-              cameraPosition={[5, 2, 5]}
-              environmentPreset="warehouse"
-            />
+            {/* Sketchfab BMW M3 GTR Embed (matches Hero Section styling exactly) */}
+            <div className="relative z-10 mx-auto w-full max-w-[520px] h-[170px] flex items-center justify-center">
+              <iframe
+                title="BMW M3 GTR E46 Street ACschnitzer BlackEdition"
+                frameBorder="0"
+                allowFullScreen
+                allow="autoplay; fullscreen; xr-spatial-tracking"
+                src="https://sketchfab.com/models/7f060f9d44b74c34a5184399a6cfc6d7/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&preload=1&transparent=1&dnt=1"
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  position: 'absolute',
+                  top: '-100px',
+                  left: '-20%',
+                  width: '140%',
+                  maxWidth: 'none',
+                  height: 'calc(100% + 200px)',
+                  clipPath: 'inset(60px 0 60px 0)'
+                }}
+              />
+            </div>
           </motion.div>
         </div>
       </div>

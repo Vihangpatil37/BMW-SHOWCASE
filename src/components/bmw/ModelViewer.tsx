@@ -3,7 +3,7 @@
 import { Suspense, useRef, useCallback, useState, useEffect, Component } from 'react'
 import type { ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Environment, PerspectiveCamera } from '@react-three/drei'
+import { Environment, PerspectiveCamera, ContactShadows, OrbitControls } from '@react-three/drei'
 import CarModel from './CarModel'
 import LoadingSpinner from './LoadingSpinner'
 import type { Group } from 'three'
@@ -21,7 +21,17 @@ interface ModelViewerProps {
   environmentPreset?: string
 }
 
-// Error Boundary to catch 3D model loading errors
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+  return isMobile
+}
+
 class ModelErrorBoundary extends Component<
   { children: ReactNode; fallback: ReactNode },
   { hasError: boolean }
@@ -97,42 +107,23 @@ function ResponsiveCamera({
   )
 }
 
-// Fallback 3D car placeholder when model fails to load
 function CarPlaceholder() {
   const groupRef = useRef<Group>(null)
-
   useFrame((_state, delta) => {
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.3
     }
   })
-
   return (
     <group ref={groupRef}>
       <mesh position={[0, 0.4, 0]}>
         <boxGeometry args={[2, 0.6, 4]} />
         <meshStandardMaterial color="#888888" transparent opacity={0.1} />
       </mesh>
-      <mesh position={[0, 0.8, -0.3]}>
-        <boxGeometry args={[1.8, 0.5, 2]} />
-        <meshStandardMaterial color="#AAAAAA" transparent opacity={0.08} />
-      </mesh>
-      {[
-        [-0.9, 0.25, 1.2],
-        [0.9, 0.25, 1.2],
-        [-0.9, 0.25, -1.2],
-        [0.9, 0.25, -1.2],
-      ].map((pos, i) => (
-        <mesh key={i} position={pos as [number, number, number]}>
-          <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-          <meshStandardMaterial color="#666666" transparent opacity={0.1} />
-        </mesh>
-      ))}
     </group>
   )
 }
 
-// The actual canvas content
 function CanvasContent({
   modelPath,
   scale,
@@ -142,28 +133,46 @@ function CanvasContent({
   cameraPosition,
   autoRotate,
   autoRotateSpeed,
-  environmentPreset,
-}: ModelViewerProps) {
+  environmentPreset = 'studio',
+  isMobile
+}: ModelViewerProps & { isMobile: boolean }) {
   return (
     <>
       <ResponsiveCamera position={cameraPosition || [5, 2, 5]} />
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 5]} intensity={1.2} castShadow />
-      <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-      <spotLight position={[0, 10, 0]} intensity={0.3} angle={0.5} penumbra={1} />
+      
+      {/* Global Lighting & Environment */}
+      <ambientLight intensity={environmentPreset === 'night' ? 0.1 : 0.4} />
       <Environment
-        preset={environmentPreset as 'city' | 'studio' | 'warehouse'}
+        preset={environmentPreset as any}
         background={false}
       />
-      <MouseRotationWrapper enabled={enableMouseRotation || false}>
+      
+      {environmentPreset === 'night' && (
+        <spotLight position={[0, 10, 0]} intensity={3} angle={0.8} penumbra={1} color="#ffffff" castShadow />
+      )}
+      {environmentPreset !== 'night' && (
+        <directionalLight position={[10, 10, 5]} intensity={1.2} />
+      )}
+
+      {/* Grounding Shadows */}
+      <ContactShadows position={[0, -1.4, 0]} opacity={0.5} scale={10} blur={2.5} far={4} />
+
+      <OrbitControls 
+        enabled={!isMobile && !enableMouseRotation} 
+        autoRotate={isMobile || autoRotate} 
+        autoRotateSpeed={autoRotateSpeed || 1} 
+        enableZoom={false} 
+        enablePan={false} 
+      />
+
+      <MouseRotationWrapper enabled={enableMouseRotation && !isMobile}>
         <ModelErrorBoundary fallback={<CarPlaceholder />}>
           <CarModel
             modelPath={modelPath}
             scale={scale}
             position={position}
             rotation={rotation}
-            autoRotate={autoRotate}
-            autoRotateSpeed={autoRotateSpeed}
+            autoRotate={false} // OrbitControls handles it now
           />
         </ModelErrorBoundary>
       </MouseRotationWrapper>
@@ -171,7 +180,6 @@ function CanvasContent({
   )
 }
 
-// Static fallback when canvas fails entirely
 function CanvasFallback() {
   return (
     <div className="flex items-center justify-center w-full h-full bg-neutral-100">
@@ -187,19 +195,9 @@ function CanvasFallback() {
   )
 }
 
-export default function ModelViewer({
-  modelPath,
-  scale = 1,
-  position = [0, 0, 0],
-  rotation = [0, 0, 0],
-  enableMouseRotation = false,
-  className = '',
-  cameraPosition = [5, 2, 5],
-  autoRotate = true,
-  autoRotateSpeed = 0.3,
-  environmentPreset = 'city',
-}: ModelViewerProps) {
+export default function ModelViewer(props: ModelViewerProps) {
   const [canvasError, setCanvasError] = useState(false)
+  const isMobile = useIsMobile()
 
   const handleCanvasError = useCallback(() => {
     setCanvasError(true)
@@ -210,7 +208,10 @@ export default function ModelViewer({
   }
 
   return (
-    <div className={`w-full h-full ${className}`}>
+    <div 
+      className={`w-full ${props.className || ''}`}
+      style={{ height: isMobile ? '300px' : '100vh', maxHeight: isMobile ? '300px' : 'none' }}
+    >
       <Canvas
         onError={handleCanvasError}
         gl={{
@@ -218,53 +219,21 @@ export default function ModelViewer({
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? 1 : [1, 2]}
         style={{ background: 'transparent' }}
       >
         <Suspense fallback={null}>
-          <CanvasContent
-            modelPath={modelPath}
-            scale={scale}
-            position={position}
-            rotation={rotation}
-            enableMouseRotation={enableMouseRotation}
-            cameraPosition={cameraPosition}
-            autoRotate={autoRotate}
-            autoRotateSpeed={autoRotateSpeed}
-            environmentPreset={environmentPreset}
-          />
+          <CanvasContent {...props} isMobile={isMobile} />
         </Suspense>
       </Canvas>
     </div>
   )
 }
 
-export function ModelViewerWithLoader({
-  modelPath,
-  scale = 1,
-  position = [0, 0, 0],
-  rotation = [0, 0, 0],
-  enableMouseRotation = false,
-  className = '',
-  cameraPosition = [5, 2, 5],
-  autoRotate = true,
-  autoRotateSpeed = 0.3,
-  environmentPreset = 'city',
-}: ModelViewerProps) {
+export function ModelViewerWithLoader(props: ModelViewerProps) {
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <ModelViewer
-        modelPath={modelPath}
-        scale={scale}
-        position={position}
-        rotation={rotation}
-        enableMouseRotation={enableMouseRotation}
-        className={className}
-        cameraPosition={cameraPosition}
-        autoRotate={autoRotate}
-        autoRotateSpeed={autoRotateSpeed}
-        environmentPreset={environmentPreset}
-      />
+      <ModelViewer {...props} />
     </Suspense>
   )
 }

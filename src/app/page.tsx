@@ -3,6 +3,8 @@
 import { lazy, Suspense } from 'react'
 import LoadingSpinner from '@/components/bmw/LoadingSpinner'
 import Navbar from '@/components/bmw/Navbar'
+import PageLoader from '@/components/bmw/PageLoader'
+import CustomCursor from '@/components/bmw/CustomCursor'
 
 // Lazy load all sections for better performance
 const HeroSection = lazy(() => import('@/components/bmw/HeroSection'))
@@ -17,7 +19,7 @@ const FooterSection = lazy(() => import('@/components/bmw/FooterSection'))
 
 function SectionLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[50vh]" style={{ backgroundColor: '#F5F3F0' }}>
+    <div className="flex items-center justify-center min-h-[50vh] bg-[#080808]">
       <LoadingSpinner />
     </div>
   )
@@ -25,7 +27,9 @@ function SectionLoader() {
 
 export default function Home() {
   return (
-    <main className="relative overflow-x-hidden" style={{ backgroundColor: '#F5F3F0' }}>
+    <main className="relative overflow-x-hidden bg-[#080808]">
+      <CustomCursor />
+      <PageLoader />
       <Navbar />
 
       <Suspense fallback={<SectionLoader />}>

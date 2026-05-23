@@ -40,14 +40,28 @@ export default function StorySection() {
     <section
       ref={ref}
       className="relative py-24 md:py-32 lg:py-40 overflow-hidden"
-      style={{ backgroundColor: '#F5F3F0' }}
+      style={{ backgroundColor: '#0d0d0d' }}
     >
+      {/* Grain overlay */}
+      <div className="absolute inset-0 grain-overlay" />
+
       {/* Background decorative element */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none">
-        <span className="text-[300px] md:text-[500px] font-black tracking-tighter leading-none opacity-[0.015] text-neutral-900 block">
+        <span className="text-[300px] md:text-[500px] font-black tracking-tighter leading-none text-white block"
+          style={{ opacity: 0.02 }}
+        >
           M
         </span>
       </div>
+
+      {/* Subtle blue ambient glow */}
+      <div
+        className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(0,102,177,0.04) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
 
       <div className="relative max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-12 lg:gap-24">
@@ -58,7 +72,7 @@ export default function StorySection() {
             transition={{ duration: 0.6 }}
             className="lg:sticky lg:top-32 lg:self-start"
           >
-            <span className="text-xs uppercase tracking-[0.3em] text-neutral-400 font-medium">
+            <span className="text-xs uppercase tracking-[0.3em] text-neutral-600 font-medium">
               Introduction
             </span>
             <div className="mt-4 flex gap-0.5">
@@ -67,7 +81,7 @@ export default function StorySection() {
               <div className="w-8 h-[2px]" style={{ backgroundColor: '#D5001C' }} />
             </div>
             {/* Animated vertical line */}
-            <div className="relative mt-8 h-32 w-[1px] bg-neutral-100 overflow-hidden hidden lg:block">
+            <div className="relative mt-8 h-32 w-[1px] overflow-hidden hidden lg:block" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
               <motion.div
                 className="absolute top-0 left-0 w-full"
                 style={{ height: lineHeight, backgroundColor: '#0066B1' }}
@@ -82,8 +96,8 @@ export default function StorySection() {
                 key={i}
                 className={`text-lg md:text-xl lg:text-2xl leading-relaxed mb-6 last:mb-0 ${
                   paragraph.accent
-                    ? 'font-black text-neutral-900 tracking-tight'
-                    : 'font-medium text-neutral-600'
+                    ? 'font-black text-white tracking-tight'
+                    : 'font-medium text-neutral-500'
                 }`}
                 initial={{ opacity: 0, y: 40 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -109,7 +123,7 @@ export default function StorySection() {
                 <div className="w-6 h-[2px]" style={{ backgroundColor: '#003B7A' }} />
                 <div className="w-6 h-[2px]" style={{ backgroundColor: '#D5001C' }} />
               </div>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400">
+              <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-600">
                 BMW M Heritage
               </span>
             </motion.div>
