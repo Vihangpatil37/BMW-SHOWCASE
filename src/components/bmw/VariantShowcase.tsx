@@ -4,69 +4,8 @@ import { useRef } from 'react'
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { ModelViewerWithLoader } from './ModelViewer'
 
-interface Variant {
-  modelPath: string
-  sketchfabId?: string
-  label: string
-  labelEn: string
-  stripeColor: string
-  accentColor: string
-  description: string
-  heightClass: string
-  cameraPosition: [number, number, number]
-  bgColor: string
-  textColor: string
-  subTextColor: string
-  environmentPreset: string
-}
-
-const variants: Variant[] = [
-  {
-    modelPath: '/models/red-car.glb',
-    sketchfabId: '8fa21fe97a6042a2a09e0b09fd546b91',
-    label: 'HELLROT',
-    labelEn: 'Hellrot Red',
-    stripeColor: '#0066B1',
-    accentColor: '#D5001C',
-    description: 'The color of competition. The same red that crossed the finish line first at Spa, Nurburgring, and every circuit that mattered.',
-    heightClass: 'min-h-[90vh]',
-    cameraPosition: [5, 2, 5],
-    bgColor: '#0e0608',
-    textColor: 'text-white',
-    subTextColor: 'text-neutral-500',
-    environmentPreset: 'studio'
-  },
-  {
-    modelPath: '/models/silver-car.glb',
-    sketchfabId: '81e322dbf656444d861e53e8b402c1db',
-    label: 'SILBER',
-    labelEn: 'Polar Silver',
-    stripeColor: '#D5001C',
-    accentColor: '#8C8C8C',
-    description: 'Understated precision. The silver that reflected BMW\'s engineering-first philosophy — no excess, only purpose.',
-    heightClass: 'min-h-[60vh]',
-    cameraPosition: [-5, 2, -5],
-    bgColor: '#0a0a0c',
-    textColor: 'text-white',
-    subTextColor: 'text-neutral-500',
-    environmentPreset: 'studio'
-  },
-  {
-    modelPath: '/models/black-car.glb',
-    sketchfabId: 'ab2574c2d1414062bedc6a5457443757',
-    label: 'SCHWARZ',
-    labelEn: 'Jet Black',
-    stripeColor: '#003B7A',
-    accentColor: '#444444',
-    description: 'Absolute authority. Black was the color of the night races, the test mules, and the engineers\' own machines.',
-    heightClass: 'min-h-[90vh]',
-    cameraPosition: [0, 1.5, 6],
-    bgColor: '#050507',
-    textColor: 'text-white',
-    subTextColor: 'text-neutral-500',
-    environmentPreset: 'night'
-  },
-]
+import { SketchfabEmbed } from './SketchfabEmbed'
+import { variants, type Variant } from '@/constants/bmwData'
 
 function VariantRow({ variant, index }: { variant: Variant; index: number }) {
   const rowRef = useRef<HTMLDivElement>(null)
@@ -118,39 +57,30 @@ function VariantRow({ variant, index }: { variant: Variant; index: number }) {
         <span
           className="text-[100px] md:text-[200px] lg:text-[280px] font-black tracking-tighter leading-none"
           style={{ color: variant.accentColor, opacity: 0.05 }}
+          aria-hidden="true"
         >
           {variant.label}
         </span>
       </motion.div>
 
-      {/* 3D Model — Exact container sizing requested by user (520x170) for uniform car sizing */}
+      {/* 3D Model — Exact container sizing requested by user for uniform car sizing */}
       <motion.div
-        className="relative z-10 mx-auto w-full max-w-[520px] h-[170px] flex items-center justify-center"
+        className="relative z-10 mx-auto w-full max-w-[580px] h-[200px] flex items-center justify-center"
         style={{ scale: modelScale, opacity }}
       >
         {variant.sketchfabId ? (
           // Sketchfab embed — oversized canvas to prevent horizontal clipping,
-          // with CSS clip-path to hide the Sketchfab UI bars (top/bottom 60px).
-          <div className="relative w-full h-full">
-            <iframe
+          // with CSS clip-path to hide the Sketchfab UI bars (top/bottom 50px).
+            <SketchfabEmbed
               title={variant.labelEn}
-              frameBorder="0"
-              allowFullScreen
-              allow="autoplay; fullscreen; xr-spatial-tracking"
-              src={`https://sketchfab.com/models/${variant.sketchfabId}/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&preload=1&transparent=1&dnt=1`}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                position: 'absolute',
-                top: '-100px',
-                left: '-20%',
-                width: '140%',
-                maxWidth: 'none',
-                height: 'calc(100% + 200px)',
-                clipPath: 'inset(60px 0 60px 0)'
-              }}
+              sketchfabId={variant.sketchfabId}
+              lazyLoad={true}
+              top="-100px"
+              left="-25%"
+              width="150%"
+              height="calc(100% + 200px)"
+              clipPath="inset(50px 0 50px 0)"
             />
-          </div>
         ) : (
           <ModelViewerWithLoader
             modelPath={variant.modelPath}
@@ -190,6 +120,7 @@ function VariantRow({ variant, index }: { variant: Variant; index: number }) {
         <span
           className="text-8xl md:text-9xl font-black tracking-tighter leading-none text-white"
           style={{ opacity: 0.04 }}
+          aria-hidden="true"
         >
           0{index + 1}
         </span>

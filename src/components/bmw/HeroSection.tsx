@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import RacingStripes from './RacingStripes'
+import { SketchfabEmbed } from './SketchfabEmbed'
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -59,6 +60,7 @@ export default function HeroSection() {
       <motion.div
         className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none z-0"
         style={{ opacity }}
+        aria-hidden="true"
       >
         <span className="text-[200px] md:text-[300px] lg:text-[400px] font-black tracking-tighter leading-none text-white"
           style={{ opacity: 0.025 }}
@@ -178,12 +180,18 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 3.5 }}
           >
-            <button className="group relative text-sm uppercase tracking-[0.2em] font-semibold text-white pb-2 transition-all duration-300 hover:tracking-[0.35em]">
+            <button 
+              className="group relative text-sm uppercase tracking-[0.2em] font-semibold text-white pb-2 transition-all duration-300 hover:tracking-[0.35em]"
+              aria-label="Explore BMW M3 E30 details"
+            >
               Explore
               <span className="absolute bottom-0 left-0 h-[2px] w-full transition-all duration-300 group-hover:w-[120%]" style={{ backgroundColor: '#D5001C' }} />
             </button>
             <span className="text-neutral-700">|</span>
-            <button className="text-sm uppercase tracking-[0.15em] font-medium text-neutral-600 hover:text-white transition-colors duration-300">
+            <button 
+              className="text-sm uppercase tracking-[0.15em] font-medium text-neutral-600 hover:text-white transition-colors duration-300"
+              aria-label="View BMW M3 Heritage"
+            >
               Heritage
             </button>
           </motion.div>
@@ -239,24 +247,16 @@ export default function HeroSection() {
           {/* Make the iframe canvas much larger than the container so the car has 
               plenty of horizontal room to spin without hitting the edges.
               Use clipPath to hide the Sketchfab title and toolbar (top/bottom 60px). */}
-          <motion.div style={{ scale: carScale }} className="relative z-10 mx-auto w-full max-w-[691px] h-[198px] flex items-center justify-center">
-            <iframe
+          <motion.div style={{ scale: carScale }} className="relative z-10 mx-auto w-full max-w-[760px] h-[218px] flex items-center justify-center">
+            <SketchfabEmbed
               title="BMW M3 E30"
-              frameBorder="0"
-              allowFullScreen
-              allow="autoplay; fullscreen; xr-spatial-tracking"
-              src="https://sketchfab.com/models/ac3c7013434e403e8faff87948caf422/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&preload=1&transparent=1&dnt=1"
-              style={{
-                border: 'none',
-                background: 'transparent',
-                position: 'absolute',
-                top: '-100px',
-                left: '-20%',
-                width: '140%',
-                maxWidth: 'none',
-                height: 'calc(100% + 200px)',
-                clipPath: 'inset(60px 0 60px 0)'
-              }}
+              sketchfabId="ac3c7013434e403e8faff87948caf422"
+              lazyLoad={false}
+              top="-100px"
+              left="-25%"
+              width="150%"
+              height="calc(100% + 200px)"
+              clipPath="inset(50px 0 50px 0)"
             />
           </motion.div>
 

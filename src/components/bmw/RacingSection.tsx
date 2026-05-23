@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { ModelViewerWithLoader } from './ModelViewer'
+import { SketchfabEmbed } from './SketchfabEmbed'
 
 export default function RacingSection() {
   const ref = useRef<HTMLDivElement>(null)
@@ -70,7 +71,7 @@ export default function RacingSection() {
       </motion.div>
 
       {/* Large background number */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none" aria-hidden="true">
         <span className="text-[200px] md:text-[350px] font-black tracking-tighter leading-none text-white block"
           style={{ opacity: 0.02 }}
         >
@@ -122,8 +123,10 @@ export default function RacingSection() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <button className="group relative text-sm uppercase tracking-[0.2em] font-semibold text-white pb-2 transition-all duration-300 hover:tracking-[0.3em]"
+              <button 
+                className="group relative text-sm uppercase tracking-[0.2em] font-semibold text-white pb-2 transition-all duration-300 hover:tracking-[0.3em]"
                 style={{ borderBottom: '1px solid rgba(255,255,255,0.15)' }}
+                aria-label="Learn more about BMW Motorsport racing history"
               >
                 Learn More
                 <span className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-500 group-hover:w-full" style={{ backgroundColor: '#D5001C' }} />
@@ -155,43 +158,55 @@ export default function RacingSection() {
 
           {/* Right: 3D Black Car */}
           <motion.div
-            className="relative h-[350px] md:h-[450px] lg:h-[550px] flex items-center justify-center"
+            className="relative h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center"
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 1, delay: 0.3 }}
           >
             {/* Enhanced glow behind car */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
+            <motion.div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full pointer-events-none"
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               style={{ 
                 background: 'radial-gradient(circle, rgba(0,102,177,0.12) 0%, transparent 70%)',
                 filter: 'blur(40px)',
               }}
             />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] rounded-full"
+            <motion.div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] rounded-full pointer-events-none"
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               style={{ 
                 background: 'radial-gradient(circle, rgba(213,0,28,0.07) 0%, transparent 70%)',
                 filter: 'blur(30px)',
               }}
             />
 
+            {/* Antigravity anti-shadow (levitation energy) */}
+            <motion.div
+              className="absolute top-[75%] left-1/2 -translate-x-1/2 w-[350px] h-[30px] rounded-[100%] pointer-events-none"
+              animate={{ opacity: [0.3, 0.7, 0.3], scale: [0.9, 1.1, 0.9] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ 
+                background: 'radial-gradient(ellipse, rgba(0,102,177,0.5) 0%, transparent 70%)',
+                filter: 'blur(10px)',
+              }}
+            />
+
             {/* Sketchfab BMW M3 GTR Embed (matches Hero Section styling exactly) */}
-            <div className="relative z-10 mx-auto w-full max-w-[520px] h-[170px] flex items-center justify-center">
-              <iframe
+            <div className="relative z-10 mx-auto w-full max-w-[580px] h-[200px] flex items-center justify-center">
+              <SketchfabEmbed
                 title="BMW M3 GTR E46 Street ACschnitzer BlackEdition"
-                frameBorder="0"
-                allowFullScreen
-                allow="autoplay; fullscreen; xr-spatial-tracking"
-                src="https://sketchfab.com/models/7f060f9d44b74c34a5184399a6cfc6d7/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&preload=1&transparent=1&dnt=1"
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  position: 'absolute',
-                  top: '-100px',
-                  left: '-20%',
-                  width: '140%',
-                  maxWidth: 'none',
-                  height: 'calc(100% + 200px)',
-                  clipPath: 'inset(60px 0 60px 0)'
+                sketchfabId="7f060f9d44b74c34a5184399a6cfc6d7"
+                lazyLoad={true}
+                top="-100px"
+                left="-25%"
+                width="150%"
+                height="calc(100% + 200px)"
+                clipPath="inset(50px 0 50px 0)"
+                wrapperProps={{
+                  animate: { y: [0, -10, 0] },
+                  transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
+                  className: "absolute inset-0 w-full h-full"
                 }}
               />
             </div>
